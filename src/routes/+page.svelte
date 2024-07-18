@@ -1,11 +1,31 @@
-<script>
-  import DefaultExport from "react-youtube";
-  let YouTube = DefaultExport.default || DefaultExport  
-  /* Client imports dist/YouTube.esm.js but the Server imports dist/YouTube.js from react-youtube. above ⬆️ fix is to make sure this wont break server code.
-   * Alternatively, we can disable SSR in this case, see the detail: https://github.com/bfanger/svelte-preprocess-react/issues/40#issuecomment-2223535203
-  */
+<script lang="ts">
+  import { onMount, onDestroy } from 'svelte';
+  import React from 'react';
+  import ReactDOM from 'react-dom/client'; // Updated import for createRoot
+  import {YouTubeWrapper} from "../YoutubeWrapper";
+
+  let root: ReactDOM.Root;
+
+  let youtubeReactComponent: ReactDOM.Container; 
+
+
+  const renderNotifiCardModal = (youtubeReactComponent: ReactDOM.Container) => {
+    root = ReactDOM.createRoot(youtubeReactComponent)
+    root.render(React.createElement(YouTubeWrapper, {}, null))
+  }
+
+  onMount(() => {
+    renderNotifiCardModal(youtubeReactComponent )
+  });
+
+  onDestroy(() => {
+    if (root) {
+      root.unmount(); // Use the unmount method on the root
+    }
+  });
 
 </script>
-<react:YouTube videoId="AdNJ3fydeao" />
 <h1>Welcome to SvelteKit</h1>
+
+<div bind:this={youtubeReactComponent}></div>
 <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
